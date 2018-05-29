@@ -5,7 +5,7 @@ echo "Start nginx service";
 service nginx start;
 
 echo "Request Cert";
-certbot --nginx -v --email $CERTBOT_EMAIL --agree-tos --keep -n --text -d $DOMAIN_NAME;
+certbot --staging --authenticator webroot --installer nginx -v --email $CERTBOT_EMAIL --agree-tos --keep -n --text -d $DOMAIN_NAME -w /data; 
 
 echo "Restart nginx, and sleep for 5";
 service nginx stop;

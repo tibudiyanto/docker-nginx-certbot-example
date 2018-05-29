@@ -1,14 +1,9 @@
 FROM nginx
 
-RUN apt update && \
-    apt install -y ruby python python-dev libffi6 libffi-dev libssl-dev curl build-essential && \
-    curl -L 'https://bootstrap.pypa.io/get-pip.py' | python && \
-    pip install -U cffi certbot certbot-nginx && \
-    apt remove --purge -y python-dev build-essential libffi-dev libssl-dev curl && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN echo "deb http://ftp.debian.org/debian stretch-backports main" >> /etc/apt/sources.list
 
+RUN apt update && \
+    apt-get install -y ruby python-certbot-nginx -t stretch-backports
 
 COPY ./scripts/ /scripts
 RUN chmod +x /scripts/*.sh
@@ -17,5 +12,8 @@ RUN chmod +x /scripts/*.sh
 RUN rm -f /etc/nginx/conf.d/*
 
 COPY ./installer/confs/nginx /etc/nginx
+
+# used for webroot authentication 
+RUN mkdir -p /data
 
 CMD ["/bin/bash", "/scripts/get_certificate.sh"]
